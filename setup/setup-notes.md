@@ -1,65 +1,75 @@
-Environment Setup
+## Environment Setup
 
-Virtual Manager:
+## Virtual Manager:
 The tool can be set up on Windows OS or MacOS by using Oracle VirtualBox Manager or UTM Virtual Machine respectively. 
 
-Download Ubuntu image:
+## Download Ubuntu image:
 Since this is being set up on a MacOS, download Ubuntu 25.10 Desktop iso (ubuntu-25.10-desktop-arm64.iso) for a Graphical User Interface (GUI). 
 
-Create a new VM in UTM:
+## Create a new VM in UTM:
 Open UTM
 Click Create a New Virtual Machine
 Choose Virtualize (not Emulate)
 Select Linux
-Configure the VM:
 
-System
-Architecture: ARM64 (aarch64)
-Memory: 4096 MB (8 GB if possible)
+## Configure the VM:
+System Architecture: ARM64 (aarch64)
+Memory: 4096 MB (4 GB)
 CPU cores: 4 (or more for better performance)
+
 Enable:
 Hardware Virtualization
 Force Multicore
 UEFI Boot
 Drives
+
 UTM will prompt you to add a boot ISO:
 Add the Ubuntu 25.10 ARM64 ISO
 Create a new virtual disk:
 Size: 64 GB recommended
 Interface: NVMe (faster) or VirtIO
-Boot the VM:
+
+## Boot the VM:
 Start the VM. You’ll see the Ubuntu installer.
 If using the desktop ISO, choose:
 “Try or Install Ubuntu”
 Then “Install Ubuntu”
 If using the server ISO, you’ll get the text-based installer.
-Install Ubuntu:
+
+## Install Ubuntu:
 The installer will walk through:
 Keyboard layout
 Networking
 Disk setup (choose “Erase disk and install Ubuntu”)
 User account creation
 Install now
-First boot and post‑install:
+
+## First boot and post‑install:
 Remove the ISO from UTM settings
 Install SPICE tools (for better display & clipboard)
+
 sudo apt update
 sudo apt install spice-vdagent (for better resolution)
 
-Prepare the System:
+## Prepare the System:
+
 sudo apt upgrade -y
 sudo apt install curl wget git net-tools -y 
 
 Docker will be used as a container for perfSONAR, as this is more reliable and reproducible. It will also integrate well with the native installed Prometheus and Grafana.
-Install Docker:
+
+## Install Docker:
+
 sudo apt update 
 sudo apt install docker.io -y
 sudo systemctl enable --now docker 
 sudo usermod -aG docker $USER (Adds user to Docker group to use without ‘sudo’)
+
 Reboot VM to apply the group change and login again.
 
-Run the perfSONAR testpoint container - The Measurement Layer:
+## Run the perfSONAR testpoint container - The Measurement Layer:
 The container launches a fully functional perfSONAR environment without relying on package repositories, hence more stable. This provides active measurements (One-Way Active Measurement Protocol latency tests and throughput tests), forming the foundation of the monitoring ecosystem.
+
 docker run -d \
   --name perfsonar-testpoint \
   --restart unless-stopped \
@@ -67,30 +77,30 @@ docker run -d \
 
 perfSONAR is the performance Service-Oriented Network monitoring ARchitecture, a network measurement toolkit designed to provide federated coverage of paths and help to establish end-to-end usage expectations. (perfsonar.net, 2025).
 
-Logs can be inspected using:
+## Logs can be inspected using:
 docker logs perfsonar-testpoint
 
-Validate the container for API, Tools, and Scheduling:
+## Validate the container for API, Tools, and Scheduling:
 docker exec -it perfsonar-testpoint pscheduler troubleshoot
 
-Verify the container is running:
+## Verify the container is running:
 docker ps (perfsonar/testpoint should be listed and running) 
 
-Run perfSONAR diagnostics:
+## Run perfSONAR diagnostics:
 docker exec -it perfsonar-testpoint pscheduler troubleshoot (everything normal)
 
-Install Prometheus - The Metrics Layer: 
+## Install Prometheus - The Metrics Layer: 
 sudo apt update
 sudo apt install prometheus -y
 
 It will start automatically and listen on port 9090.
 
-Verify Prometheus is listening:
+## Verify Prometheus is listening:
 curl http://localhost:9090 (A basic HTML page will show to confirm it’s running).
 
 Prometheus scrapes perfSONAR’s exposed metrics endpoints at defined intervals and stores them in a time‑series database for analysis and alerting.
 
-Install Grafana - The Visualisation Layer:
+## Install Grafana - The Visualisation Layer:
 Add Grafana and its GPG (GNU Privacy Guard) key in binary format to prevent key mismatch: 
 
 GPG key is a pair of cryptographic keys; a public key to encrypt data or verify signatures, and a private key for decrypting data or creating signatures.
@@ -100,39 +110,100 @@ curl -fsSL https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/
 
 
 
-Add the Grafana repository, referencing its keyring:
+## Add the Grafana repository, referencing its keyring:
 
 echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | \
   sudo tee /etc/apt/sources.list.d/grafana.list > /dev/null
 
-Update and install Grafana:
+## Update and install Grafana:
 
 sudo apt update
 sudo apt install grafana -y
 sudo systemctl enable --now grafana-server
 
-Access Grafana:
+## Access Grafana:
 Open http://localhost:3000 on web browser
 Username: admin
 Password: admin (change this to yours when prompted)
 
-Connect Prometheus to perfSONAR container:
+## Connect Prometheus to perfSONAR container:
 Find the container’s IP address:
+
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' perfsonar-testpoint
 IP address: 172.17.0.2
-Edit Prometheus configuration:
+
+
+## Prometheus Configuration
+
+sudo nano /etc/prometheus/prometheus.yml
+
+## Edit /etc/prometheus/prometheus.yml to include:
+
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minu>
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: 'example'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['localhost:9093']
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+    scrape_timeout: 5s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: node
+    # If prometheus-node-exporter is installed, grab stats about the local
+    # machine by default.
+    static_configs:
+      - targets: ['localhost:9100']
+
+  - job_name: 'perfsonar'
+    static_configs:
+      - targets: ['172.17.0.2:9595']
+
+
+
+Restart Prometheus:
+
+sudo systemctl restart prometheus
+sudo systemctl status prometheus
+
+If status is active/running, then in your browser Go to: http://localhost:9090/targets. You should see a new target under job perfsonar. Ideally status: UP.
 
 
 
 
+## Build Grafana dashboards:
 
 
 
-Build Grafana dashboards:
-
-
-
-Create Ansible playbooks for reproducibility: 
+## Create Ansible playbooks for reproducibility: 
 Ansible allows automation of the whole stack.
 
 

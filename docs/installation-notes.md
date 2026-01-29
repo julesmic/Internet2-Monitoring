@@ -1,3 +1,5 @@
+Check README notes for detailed instructions, this is a general overview:
+
 1. Install Docker
 
 2. Run the perfSONAR testpoint container - The Measurement Layer
@@ -12,18 +14,9 @@
 
 7. Edit Prometheus configuration
 
+8. Build Grafana dashboards:
 
-
-
-
-
-
-Build Grafana dashboards:
-
-
-
-Create Ansible playbooks for reproducibility: 
-Ansible allows automation of the whole stack.
+9. Create Ansible playbooks for reproducibility: Ansible allows automation of the whole stack.
 
 
 

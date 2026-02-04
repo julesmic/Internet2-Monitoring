@@ -95,7 +95,42 @@ It will start automatically and listen on port 9090.
 ## Verify Prometheus is listening:
 curl http://localhost:9090 (A basic HTML page will show to confirm it’s running).
 
-Prometheus scrapes perfSONAR’s exposed metrics endpoints at defined intervals and stores them in a time‑series database for analysis and alerting.
+## Create Prometheus exporter:
+A lightweight script (pscheduler_exporter) is created as a Prometheus exporter for perfSONAR. This helps to pull perfSONAR data from inside the Docker container and expose it to Prometheus in a standard format. It runs pscheduler tasks inside the container, extracts key metrics (e.g., task count, duration, errors), and writes them to a Prometheus-readable format.
+
+Since the Docker container doesn’t expose metrics:
+
+Use pscheduler CLI inside the container to run diagnostic tasks
+Parse the results (e.g., latency, throughput, success/failure)
+Push them to Prometheus using a custom exporter or node exporter textfile collector
+Creating pscheduler_exporter:
+Create the Exporter Directory
+cd ~/internet2-monitoring
+mkdir -p setup/exporter
+Create the Exporter Script (Python)
+nano setup/exporter/pscheduler_exporter.py
+Write the script in an IDE of choice, then paste it in pscheduler_exporter.py.
+
+Enable Node Exporter’s Textfile Collector: 
+
+Install node exporter:
+sudo apt install prometheus-node-exporter -y
+Check the collector directory:
+ls /var/lib/prometheus/node-exporter/
+Create the textfile collector directory:
+sudo mkdir -p /var/lib/node_exporter/textfile_collector
+Give permissions:
+sudo chmod 777 /var/lib/node_exporter/textfile_collector
+
+Add a Cron Job to Run the Exporter:
+Open cron: crontab -e
+Select Option 1 (/bin/nano) as this is the easiest for quick edits. 
+Paste the below into the opened job. This will run the exporter every 5 minutes: 
+*/5 * * * * /usr/bin/python3 /home/jules/internet2-monitoring/setup/exporter/pscheduler_exporter.py
+Ctrl O and Enter to save, then Crtl X to exit.
+
+Add the Exporter to Prometheus:
+sudo nano /etc/prometheus/prometheus.yml
 
 ## Install Grafana - The Visualisation Layer:
 Add Grafana and its GPG (GNU Privacy Guard) key in binary format to prevent key mismatch: 

@@ -182,12 +182,16 @@ scrape_configs:
 
 
 
-Restart Prometheus:
+Restart Prometheus for functionality:
 
 sudo systemctl restart prometheus
 sudo systemctl status prometheus
 
-If status is active/running, then in your browser Go to: http://localhost:9090/targets. You should see a new target under job perfsonar. Ideally status: UP.
+If status is active/running, then in your browser Go to: http://localhost:9090/targets. Navigate to Staus and select Targets in the dropdown menu, you should see prometheus and node_exporter states as UP. This means that Prometheus is scraping itself correctly on localhost:9090 and scraping the node exporter on localhost:9100.
+The system metrics are being collected.
+The textfile collector (where your perfSONAR exporter will write metrics) is available.
+Prometheus is healthy and scraping on schedule.
+
 
 
 

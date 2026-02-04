@@ -44,7 +44,3 @@ scrape_configs:
     # machine by default.
     static_configs:
       - targets: ['localhost:9100']
-
-  - job_name: 'perfsonar'
-    static_configs:
-      - targets: ['172.17.0.2:9595']

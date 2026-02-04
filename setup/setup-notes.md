@@ -81,13 +81,10 @@ perfSONAR is the performance Service-Oriented Network monitoring ARchitecture, a
 docker logs perfsonar-testpoint
 
 ## Validate the container for API, Tools, and Scheduling:
-docker exec -it perfsonar-testpoint pscheduler troubleshoot
+docker exec -it perfsonar-testpoint pscheduler troubleshoot (everything normal)
 
 ## Verify the container is running:
 docker ps (perfsonar/testpoint should be listed and running) 
-
-## Run perfSONAR diagnostics:
-docker exec -it perfsonar-testpoint pscheduler troubleshoot (everything normal)
 
 ## Install Prometheus - The Metrics Layer: 
 sudo apt update
@@ -182,10 +179,6 @@ scrape_configs:
     # machine by default.
     static_configs:
       - targets: ['localhost:9100']
-
-  - job_name: 'perfsonar'
-    static_configs:
-      - targets: ['172.17.0.2:9595']
 
 
 

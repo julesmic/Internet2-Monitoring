@@ -1,4 +1,4 @@
-# Deployment and Configuration of an Internet2-Inspired Global Network Monitoring and orchestration Tool
+# Deployment and Configuration of an Internet2-Inspired Global Network Monitoring and Orchestration Tool
 
 ## Overview
 

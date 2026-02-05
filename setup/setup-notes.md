@@ -52,14 +52,12 @@ sudo apt update
 sudo apt install spice-vdagent (for better resolution)
 
 ## Prepare the System:
-
 sudo apt upgrade -y
 sudo apt install curl wget git net-tools -y 
 
 Docker will be used as a container for perfSONAR, as this is more reliable and reproducible. It will also integrate well with the native installed Prometheus and Grafana.
 
 ## Install Docker:
-
 sudo apt update 
 sudo apt install docker.io -y
 sudo systemctl enable --now docker 
@@ -103,6 +101,7 @@ Since the Docker container doesn’t expose metrics:
 Use pscheduler CLI inside the container to run diagnostic tasks
 Parse the results (e.g., latency, throughput, success/failure)
 Push them to Prometheus using a custom exporter or node exporter textfile collector
+
 Creating pscheduler_exporter:
 Create the Exporter Directory
 cd ~/internet2-monitoring
@@ -110,6 +109,10 @@ mkdir -p setup/exporter
 Create the Exporter Script (Python)
 nano setup/exporter/pscheduler_exporter.py
 Write the script in an IDE of choice, then paste it in pscheduler_exporter.py.
+Test the script manually:
+python3 /home/jules/internet2-monitoring/setup/exporter/pscheduler_exporter.py
+It should create a file in this location: /var/lib/node_exporter/textfile_collector/perfsonar.prom
+Check the location: ls -l /var/lib/node_exporter/textfile_collector/. If perfsonar.prom is there, then the script is working.
 
 Enable Node Exporter’s Textfile Collector: 
 

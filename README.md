@@ -1,5 +1,17 @@
 # Deployment and Configuration of an Internet2-Inspired Global Network Monitoring and Orchestration Tool
 
+## Project history and current direction
+
+**Legacy snapshot**
+The original monitoring stack (Prometheus + Grafana + perfSONAR) is preserved in the `legacy` branch and the tag `v1-legacy`. This branch contains the initial architecture, configuration files, and VM artifacts used during the first phase of the project.
+
+**New approach**
+Active development for the new architecture is happening on the branch `project/new-approach`. This branch contains the new approach and notes for the revised design. See `docs/transition.md` for the rationale and migration notes.
+
+**How to view legacy work**
+- Legacy branch: `git checkout legacy`
+- Legacy tag: `git checkout tags/v1-legacy`
+
 ## Overview
 
 This project builds a reproducible, locally deployable network monitoring and orchestration environment inspired by Internet2. It integrates perfSONAR, Prometheus, Grafana, and Ansible on Ubuntu 25.10 ARM64, designed for academic experimentation and performance analysis. This is developed as part of my final-year dissertation at Oxford Brookes University.

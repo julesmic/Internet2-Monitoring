@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  # --- The "Internet2" Sites (Data Transfer Nodes) ---
+  # The "Internet2" Sites (Data Transfer Nodes)
   site-a-dtn:
     image: networkstatic/iperf3
     command: -s
@@ -16,7 +14,7 @@ services:
     networks:
       - internet2
 
-  # --- Network Performance Exporter (Blackbox) ---
+  # Network Performance Exporter (Blackbox)
   blackbox-exporter:
     image: prom/blackbox-exporter
     ports:
@@ -24,7 +22,7 @@ services:
     networks:
       - internet2
 
-  # --- The "NOC" (Monitoring Stack) ---
+  # The "NOC" (Monitoring Stack)
   prometheus:
     image: prom/prometheus
     volumes:
@@ -46,4 +44,3 @@ services:
 networks:
   internet2:
     driver: bridge
-EOF

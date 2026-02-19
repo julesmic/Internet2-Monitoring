@@ -22,7 +22,7 @@
     {
       "type": "stat",
       "title": "Site A Status",
-      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
       "targets": [
         {
           "expr": "probe_success{instance=\"site-a-dtn\"}",
@@ -52,11 +52,41 @@
     {
       "type": "stat",
       "title": "Site B Status",
-      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
       "targets": [
         {
           "expr": "probe_success{instance=\"site-b-dtn\"}",
           "legendFormat": "Site B"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Site C Status",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "probe_success{instance=\"site-c-dtn\"}",
+          "legendFormat": "Site C"
         }
       ],
       "options": {
@@ -162,3 +192,4 @@
   "version": 1,
   "weekStart": ""
 }
+

@@ -39,13 +39,13 @@ Prometheus scrapes both the Blackbox Exporter and each DTN exporter. Grafana is 
 
 1. **Clone the repository** 
 
-git clone https://github.com/julesmic/internet2-monitoring.git
+   git clone https://github.com/julesmic/internet2-monitoring.git
 
-cd internet2-monitoring
+   cd internet2-monitoring
 
 2. **Start the stack**
    
-sudo docker-compose up -d
+   sudo docker-compose up -d
 
 3. **Open Grafana**
 URL: http://localhost:3000
@@ -57,16 +57,19 @@ The dashboard is provisioned as **Internet2 Monitoring Dashboard**.
 
 ## Configuration Notes
 
-• Prometheus: edit prometheus/prometheus.yml to add or remove scrape targets.
-• Blackbox: edit blackbox/blackbox.yml to change probe modules and targets.
-• Grafana: dashboards are in grafana/dashboards; provisioning files are in grafana/provisioning.
-• DTN exporter: dtn/exporter.py exposes dtn_status and dtn_latency_ms on /metrics.
+1. Prometheus: edit prometheus/prometheus.yml to add or remove scrape targets.
+
+2. Blackbox: edit blackbox/blackbox.yml to change probe modules and targets.
+
+3. Grafana: dashboards are in grafana/dashboards; provisioning files are in grafana/provisioning.
+
+4. DTN exporter: dtn/exporter.py exposes dtn_status and dtn_latency_ms on /metrics.
 
 
 ---
 
 ## Extending the Lab
 
-• Add DTN nodes by copying dtn/, updating docker-compose.yml, and adding scrape targets.
-• Add probe targets by editing blackbox/blackbox.yml and Prometheus jobs.
-• Add panels by editing grafana/dashboards/internet2-dashboard.json.
+-- Add DTN nodes by copying dtn/, updating docker-compose.yml, and adding scrape targets.
+-- Add probe targets by editing blackbox/blackbox.yml and Prometheus jobs.
+-- Add panels by editing grafana/dashboards/internet2-dashboard.json.

@@ -1,0 +1,28 @@
+modules:
+  icmp:
+    prober: icmp
+
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      valid_status_codes: [200, 301, 302]
+      method: GET
+
+  tcp_connect:
+    prober: tcp
+    timeout: 5s
+
+  dns_lookup:
+    prober: dns
+    timeout: 5s
+    dns:
+      query_name: "google.com"
+      query_type: "A"
+
+  tls_connect:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      tls: true
+

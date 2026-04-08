@@ -71,5 +71,7 @@ The dashboard is provisioned as **Internet2 Monitoring Dashboard**.
 ## Extending the Lab
 
 -- Add DTN nodes by copying dtn/, updating docker-compose.yml, and adding scrape targets.
+
 -- Add probe targets by editing blackbox/blackbox.yml and Prometheus jobs.
+
 -- Add panels by editing grafana/dashboards/internet2-dashboard.json.

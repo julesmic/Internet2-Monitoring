@@ -30,22 +30,7 @@ Prometheus scrapes both the Blackbox Exporter and each DTN exporter. Grafana is 
 
 ## Repository Layout
 
-internet2-monitoring/
-├── docker-compose.yml
-├── prometheus/
-│   └── prometheus.yml
-├── blackbox/
-│   └── blackbox.yml
-├── grafana/
-│   ├── dashboards/internet2-dashboard.json
-│   └── provisioning/datasources/*.yml
-├── dtn/
-│   ├── Dockerfile
-│   └── exporter.py
-├── docs/
-├── playbook.yml
-├── inventory.ini
-└── README.md
+<img width="1140" height="816" alt="image" src="https://github.com/user-attachments/assets/806ec98b-e1a0-416e-8702-dde90b463078" />
 
 
 ---
@@ -55,6 +40,7 @@ internet2-monitoring/
 1. **Clone the repository** 
 
 git clone https://github.com/julesmic/internet2-monitoring.git
+
 cd internet2-monitoring
 
 2. **Start the stack**

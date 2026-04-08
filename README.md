@@ -1,60 +1,86 @@
-# Deployment and Configuration of an Internet2-Inspired Global Network Monitoring and Orchestration Tool
+# Deployment and Configuration of an Internet2 Global Network Monitoring and Orchestration Tool.
 
-## Project history and current direction
+**A reproducible, containerised monitoring lab** demonstrating multi‑protocol probing, distributed DTN node monitoring, and real‑time visualisation using Prometheus, Grafana, and lightweight DTN exporters.
 
-**Legacy snapshot**
-The original monitoring stack (Prometheus + Grafana + perfSONAR) is preserved in the `legacy` branch and the tag `v1-legacy`. This branch contains the initial architecture, configuration files, and VM artifacts used during the first phase of the project.
+---
 
-**New approach**
-Active development for the new architecture is happening on the branch `project/new-approach`. This branch contains the new approach and notes for the revised design. See `docs/transition.md` for the rationale and migration notes.
+## Project Summary
 
-**How to view legacy work**
-- Legacy branch: `git checkout legacy`
-- Legacy tag: `git checkout tags/v1-legacy`
+This repository implements a compact, monitoring stack intended for research and teaching. It demonstrates:
 
-## Overview
+- **Active probing** of external services (ICMP, DNS, HTTP, TLS) via Prometheus Blackbox Exporter.  
+- **Synthetic DTN nodes** exposing availability and latency metrics.  
+- **Centralised collection** with Prometheus and **visualisation** with Grafana.  
+- **Docker Compose** orchestration for reproducible deployment and easy extension.
 
-This project builds a reproducible, locally deployable network monitoring and orchestration environment inspired by Internet2. It integrates perfSONAR, Prometheus, Grafana, and Ansible on Ubuntu 25.10 ARM64, designed for academic experimentation and performance analysis. This is developed as part of my final-year dissertation at Oxford Brookes University.
+---
 
-## Project Goals
+## Architecture Overview
 
-• Deploy a lightweight perfSONAR testpoint using Docker
-• Collect and visualise network metrics with Prometheus and Grafana
-• Automate setup and configuration with Ansible
-• Document all steps for reproducibility 
+The system is organised into four logical layers:
 
-## Stack Overview
+- **Monitoring Core**: Prometheus (scrape and storage) and Grafana (visualisation).  
+- **Blackbox Probing Layer**: Blackbox Exporter modules for ICMP, DNS, HTTP, TLS.  
+- **DTN Layer**: containerised DTN exporters exposing `dtn_status` and `dtn_latency_ms`.  
+- **Presentation Layer**: provisioned Grafana dashboard `Internet2 Monitoring Dashboard`.
 
-perfSONAR - Network measurement toolkit deployed in Docker
-Prometheus - Metrics collection and scraping installed and deployed locally
-Grafana - Dashboard and visualisation installed and deployed locally
-Ansible - Automation and reproducibility installed and deployed locally
+Prometheus scrapes both the Blackbox Exporter and each DTN exporter. Grafana is provisioned to load the dashboard automatically from `grafana/dashboards`.
 
-## Installation Steps
+---
 
-1. Docker:
+## Repository Layout
 
-sudo apt update
-sudo apt install docker.io -y
-sudo usermod -aG docker $USER
+internet2-monitoring/
+├── docker-compose.yml
+├── prometheus/
+│   └── prometheus.yml
+├── blackbox/
+│   └── blackbox.yml
+├── grafana/
+│   ├── dashboards/internet2-dashboard.json
+│   └── provisioning/datasources/*.yml
+├── dtn/
+│   ├── Dockerfile
+│   └── exporter.py
+├── docs/
+├── playbook.yml
+├── inventory.ini
+└── README.md
 
-2. perfSONAR Testpoint (Docker)
 
-docker run -d \
-  --name perfsonar-testpoint \
-  --restart unless-stopped \
-  perfsonar/testpoint
+---
 
-3. Prometheus
+## Quick Start
 
-sudo apt install prometheus -y
+1. **Clone the repository** 
 
-4. Grafana (with secure keyring setup)
+git clone https://github.com/julesmic/internet2-monitoring.git
+cd internet2-monitoring
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | \
-  sudo tee /etc/apt/sources.list.d/grafana.list > /dev/null
-sudo apt update
-sudo apt install grafana -y
-sudo systemctl enable --now grafana-server
+2. **Start the stack**
+   
+sudo docker-compose up -d
+
+3. **Open Grafana**
+URL: http://localhost:3000
+Default credentials: admin / admin (change password when prompted)
+The dashboard is provisioned as **Internet2 Monitoring Dashboard**.
+
+
+---
+
+## Configuration Notes
+
+• Prometheus: edit prometheus/prometheus.yml to add or remove scrape targets.
+• Blackbox: edit blackbox/blackbox.yml to change probe modules and targets.
+• Grafana: dashboards are in grafana/dashboards; provisioning files are in grafana/provisioning.
+• DTN exporter: dtn/exporter.py exposes dtn_status and dtn_latency_ms on /metrics.
+
+
+---
+
+## Extending the Lab
+
+• Add DTN nodes by copying dtn/, updating docker-compose.yml, and adding scrape targets.
+• Add probe targets by editing blackbox/blackbox.yml and Prometheus jobs.
+• Add panels by editing grafana/dashboards/internet2-dashboard.json.

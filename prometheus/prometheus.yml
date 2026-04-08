@@ -1,0 +1,99 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+
+  - job_name: 'blackbox_http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://www.google.com
+        - https://www.bbc.co.uk
+        - https://www.cloudflare.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox_dns'
+    metrics_path: /probe
+    params:
+      module: [dns_lookup]
+    static_configs:
+      - targets:
+        - 8.8.8.8
+        - 1.1.1.1
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox_tcp'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+        - google.com:443
+        - cloudflare.com:443
+        - www.bbc.co.uk:443
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox_icmp'
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+      - targets:
+        - 1.1.1.1
+        - 8.8.8.8
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox_tls'
+    metrics_path: /probe
+    params:
+      module: [tls_connect]
+    static_configs:
+      - targets:
+        - google.com:443
+        - cloudflare.com:443
+        - www.bbc.co.uk:443
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'dtn_nodes'
+    static_configs:
+      - targets:
+        - dtn-a:80
+        - dtn-b:80
+        - dtn-c:80
+        - dtn-d:80
+        - dtn-e:80
+
+
+

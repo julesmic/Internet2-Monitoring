@@ -1,46 +1,70 @@
 services:
-  # The "Internet2" Sites (Data Transfer Nodes)
-  site-a-dtn:
-    image: networkstatic/iperf3
-    command: -s
-    ports:
-      - "5201:5201"
-    networks:
-      - internet2
 
-  site-b-dtn:
-    image: networkstatic/iperf3
-    command: -s
-    networks:
-      - internet2
-
-  # Network Performance Exporter (Blackbox)
-  blackbox-exporter:
-    image: prom/blackbox-exporter
-    ports:
-      - "9115:9115"
-    networks:
-      - internet2
-
-  # The "NOC" (Monitoring Stack)
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
+    container_name: prometheus
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - "9090:9090"
     networks:
-      - internet2
+      - monitor-net
+
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox
+    volumes:
+      - ./blackbox/blackbox.yml:/config/blackbox.yml
+    command:
+      - "--config.file=/config/blackbox.yml"
+    ports:
+      - "9115:9115"
+    networks:
+      - monitor-net
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
-      - internet2
+      - monitor-net
+
+  dtn-a:
+    build: ./dtn
+    container_name: dtn-a
+    networks:
+      - monitor-net
+
+  dtn-b:
+    build: ./dtn
+    container_name: dtn-b
+    networks:
+      - monitor-net
+
+  dtn-c:
+    build: ./dtn
+    container_name: dtn-c
+    networks:
+      - monitor-net
+      
+  dtn-d:
+    build: ./dtn
+    container_name: dtn-d
+    networks:
+      - monitor-net
+
+  dtn-e:
+    build: ./dtn
+    container_name: dtn-e
+    networks:
+      - monitor-net
 
 networks:
-  internet2:
+  monitor-net:
     driver: bridge

@@ -5,7 +5,7 @@
   "timezone": "browser",
   "schemaVersion": 38,
   "version": 1,
-  "refresh": "5s",
+  "refresh": "15s",
   "time": {
     "from": "now-5m",
     "to": "now"
@@ -72,7 +72,7 @@
       "title": "HTTP Response Time (ms)",
       "id": 5,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "targets": [
         {
           "expr": "probe_http_duration_seconds{job=\"blackbox_http\"} * 1000",
@@ -86,7 +86,7 @@
       "title": "TLS Certificate Expiry (days)",
       "id": 7,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "targets": [
         {
           "expr": "(probe_ssl_earliest_cert_expiry{job=\"blackbox_tls\"} - time()) / 86400",

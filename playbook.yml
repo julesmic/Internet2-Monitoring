@@ -59,19 +59,9 @@
         state: started
         enabled: yes
 
-    - name: Copy docker-compose.yml into playbook directory
-      copy:
-        src: docker-compose.yml
-        dest: "{{ playbook_dir }}/docker-compose.yml"
-        mode: '0644'
-
-    - name: Copy prometheus.yml into playbook directory
-      copy:
-        src: prometheus.yml
-        dest: "{{ playbook_dir }}/prometheus.yml"
-        mode: '0644'
-
+    # The compose file and configs are already in the repo, so the stack is
+    # started in place from the playbook directory.
     - name: Start Internet2 Lab
-      command: docker compose up -d
+      command: docker compose up -d --build
       args:
         chdir: "{{ playbook_dir }}"

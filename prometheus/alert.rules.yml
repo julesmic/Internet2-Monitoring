@@ -1,0 +1,59 @@
+groups:
+
+  - name: blackbox_probes
+    rules:
+      - alert: ProbeFailed
+        expr: probe_success == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.job }} probe failing for {{ $labels.instance }}"
+          description: "{{ $labels.instance }} has failed its {{ $labels.job }} check for more than 2 minutes."
+
+      - alert: SlowHttpResponse
+        expr: probe_duration_seconds{job="blackbox_http"} > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow HTTP response from {{ $labels.instance }}"
+          description: "HTTP probe has taken over 2s for 5 minutes (current: {{ $value | humanizeDuration }})."
+
+      - alert: TLSCertificateExpiringSoon
+        expr: (probe_ssl_earliest_cert_expiry{job="blackbox_tls"} - time()) / 86400 < 14
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "TLS certificate for {{ $labels.instance }} expires soon"
+          description: "Certificate expires in {{ $value | printf \"%.1f\" }} days."
+
+  - name: dtn_nodes
+    rules:
+      - alert: DTNNodeDown
+        expr: up{job="dtn_nodes"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DTN node {{ $labels.instance }} is down"
+          description: "Prometheus has been unable to scrape {{ $labels.instance }} for more than 1 minute."
+
+      - alert: DTNPeerUnreachable
+        expr: dtn_peer_reachable == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.instance }} cannot reach {{ $labels.target }}"
+          description: "Ping from {{ $labels.instance }} to {{ $labels.target }} has failed for 2 minutes."
+
+      - alert: DTNHighLatency
+        expr: dtn_to_dtn_latency_ms > 50
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency from {{ $labels.instance }} to {{ $labels.target }}"
+          description: "DTN-to-DTN latency has been above 50 ms for 5 minutes (current: {{ $value | printf \"%.1f\" }} ms)."

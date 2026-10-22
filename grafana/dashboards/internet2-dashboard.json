@@ -16,7 +16,12 @@
       "title": "Availability (probe_success)",
       "id": 1,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "probe_success{job=~\"blackbox_.*\"}",
@@ -30,7 +35,12 @@
       "title": "ICMP Latency (ms)",
       "id": 2,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "probe_icmp_duration_seconds{job=\"blackbox_icmp\"} * 1000",
@@ -44,7 +54,12 @@
       "title": "DNS Lookup Time (ms)",
       "id": 3,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
       "targets": [
         {
           "expr": "probe_dns_lookup_time_seconds{job=\"blackbox_dns\"} * 1000",
@@ -58,7 +73,12 @@
       "title": "Probe Duration (Total, ms)",
       "id": 4,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
       "targets": [
         {
           "expr": "probe_duration_seconds{job=~\"blackbox_.*\"} * 1000",
@@ -72,7 +92,12 @@
       "title": "HTTP Response Time (ms)",
       "id": 5,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
       "targets": [
         {
           "expr": "probe_http_duration_seconds{job=\"blackbox_http\"} * 1000",
@@ -86,7 +111,12 @@
       "title": "TLS Certificate Expiry (days)",
       "id": 7,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
       "targets": [
         {
           "expr": "(probe_ssl_earliest_cert_expiry{job=\"blackbox_tls\"} - time()) / 86400",
@@ -95,13 +125,17 @@
         }
       ]
     },
-
     {
       "type": "table",
       "title": "DTN Node Status",
       "id": 9001,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
       "targets": [
         {
           "expr": "dtn_status",
@@ -121,44 +155,78 @@
             {
               "type": "value",
               "options": {
-                "0": { "text": "DOWN", "color": "red" },
-                "1": { "text": "UP", "color": "green" }
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
               }
             }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": 0 },
-              { "color": "green", "value": 1 }
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           }
         },
         "overrides": [
           {
-            "matcher": { "id": "byName", "options": "Value" },
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
             "properties": [
-              { "id": "custom.width", "value": 150 },
-              { "id": "custom.align", "value": "center" }
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
             ]
           },
           {
-            "matcher": { "id": "byName", "options": "instance" },
+            "matcher": {
+              "id": "byName",
+              "options": "instance"
+            },
             "properties": [
-              { "id": "custom.width", "value": 200 },
-              { "id": "custom.align", "value": "left" }
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
             ]
           }
         ]
       }
     },
-
     {
       "type": "timeseries",
       "title": "DTN Latency to 1.1.1.1 (ms)",
       "id": 9003,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 32 },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
       "targets": [
         {
           "expr": "dtn_latency_ms",
@@ -168,11 +236,89 @@
       ]
     },
     {
+      "id": 9004,
+      "type": "timeseries",
+      "title": "DTN-to-DTN Latency (ms)",
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 40
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "dtn_to_dtn_latency_ms",
+          "legendFormat": "{{instance}} -> {{target}}"
+        }
+      ]
+    },
+    {
+      "id": 9005,
+      "type": "table",
+      "title": "Active Alerts",
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "ALERTS",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true
+            },
+            "indexByName": {
+              "alertname": 0,
+              "alertstate": 1,
+              "severity": 2,
+              "instance": 3,
+              "job": 4
+            }
+          }
+        }
+      ]
+    },
+    {
       "type": "timeseries",
       "title": "Multi‑Protocol Comparison (Latency ms)",
       "id": 8,
       "datasource": "prometheus",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 48 },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
       "targets": [
         {
           "expr": "probe_duration_seconds{job=\"blackbox_http\"} * 1000",
@@ -188,4 +334,3 @@
     }
   ]
 }
-
